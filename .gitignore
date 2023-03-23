@@ -1,0 +1,16 @@
+wp-config.php
+wp-content/uploads
+.idea
+.ci
+wp-content/cache
+wp-content/cache2
+bk01042018
+wp-content/plugins/wp-rocket/cache.json
+.env
+.vscode/
+Dockerfile
+docker-compose.yml
+uploads/
+utils/
+wp-content/wp-rocket-config/index.html
+wp-content/wp-rocket-config/localhost.php

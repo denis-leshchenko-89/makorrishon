@@ -1,0 +1,28 @@
+stages:
+  - build
+
+build_develop:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USERNAME -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build --tag $CI_REGISTRY/$CI_REGISTRY_IMAGE:latest --target wordpress -f .ci/Dockerfile .
+    - docker push $CI_REGISTRY/$CI_REGISTRY_IMAGE:latest
+    - |
+      curl -k -X POST \
+      -F token=$CI_JOB_TOKEN \
+      -F ref=master \
+      -F "variables[WORDPRESS_VERSION]=latest" \
+      -F "variables[ENV]=develop" \
+      https://gitlab.ih.rancher/api/v4/projects/25/trigger/pipeline
+  only:
+    - develop
+
+build_production:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USERNAME -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build --tag $CI_REGISTRY/$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --target wordpress -f .ci/Dockerfile .
+    - docker push $CI_REGISTRY/$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  only:
+    - master
+    - /^release-.*$/
